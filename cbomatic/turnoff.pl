@@ -5,7 +5,7 @@ use strict;
 use Device::BCM2835;
 use Proc::ProcessTable;
 
-#main program
+#main program routine
 killscripts();
 print "initalizing GPIO \n";
 rpigpioset();

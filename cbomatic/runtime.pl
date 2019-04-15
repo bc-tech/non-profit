@@ -13,7 +13,7 @@ use Sys::SigAction qw( timeout_call );
 $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME} = 0;
 use IPC::Shareable;
 
-#main program
+#main program routine
 my $json_text;
 my $buffer;
 my $handle = tie $buffer, 'IPC::Shareable', undef, { destroy => 1 };
