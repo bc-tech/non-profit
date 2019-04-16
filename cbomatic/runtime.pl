@@ -14,11 +14,12 @@ $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME} = 0;
 use IPC::Shareable;
 
 #main program routine
+my $sensortype = '2' #0 or 1 invalid, 2 for DHT22, 3 for BME280
 my $json_text;
 my $buffer;
 my $handle = tie $buffer, 'IPC::Shareable', undef, { destroy => 1 };
 rpigpioset();
-my $pid = fork(); if ($pid == -1) { die; } elsif ($pid == 0) { dht22(); exit 0; }
+my $pid = fork(); if ($pid == -1) { die; } elsif ($pid == 0) { sensor1(); exit 0; }
 
 $pid = fork(); if ($pid == -1) { die; } elsif ($pid == 0) { cycleloop(); exit 0; }
 
@@ -51,7 +52,7 @@ sub ctlA {
  ($memfree) = ($memfree =~ /(?:=|:\s*)(\d+\.?\d*)/);
  $cpuclock /= 1000000;
  my $memused =  sprintf("%.2f", (($memtotal - $memfree) / $memtotal)*100);
- my @reportdht22 = tempf();
+ my @reportsensor1 = tempf();
  my %report = (
  7 => Device::BCM2835::gpio_lev(&Device::BCM2835::RPI_V2_GPIO_P1_07),
  11 => Device::BCM2835::gpio_lev(&Device::BCM2835::RPI_V2_GPIO_P1_11),
@@ -66,9 +67,9 @@ sub ctlA {
  cpuclock => $cpuclock,
  cputemp => $cputemp,
  memused => $memused,
- dht22tempc => $reportdht22[2],
- dht22tempf => $reportdht22[0],
- dht22rh => $reportdht22[1],
+ sensor1tempc => $reportsensor1[2],
+ sensor1tempf => $reportsensor1[0],
+ sensor1rh => $reportsensor1[1],
  host => "evergreen",
  );
  my $reportref = \%report;
@@ -119,26 +120,26 @@ sub cycleloop {
  my $targetmin = '96.5';
  my $targetinc = $targetmin + '0.25';
  my $targetmax = '99.25';
- my @dht22 = tempf();
- #print "Temperature at " . tstamp() . " is " . $dht22[0] . " degrees F - Humidity " . $dht22[1] . "%\n";
- if ($dht22[0] <= 40) {
+ my @sensor1 = tempf();
+ #print "Temperature at " . tstamp() . " is " . $sensor1[0] . " degrees F - Humidity " . $sensor1[1] . "%\n";
+ if ($sensor1[0] <= 40) {
     #print "Heating elements shut off at " . tstamp() . " \n";
    ctl7(); my $i = 0; 
    while ($i < 9) {
-     @dht22 = tempf();
-     #print "Temperature at " . tstamp() . " is " . $dht22[0] . " degrees F - Humidity " . $dht22[1] . "%\n";
+     @sensor1 = tempf();
+     #print "Temperature at " . tstamp() . " is " . $sensor1[0] . " degrees F - Humidity " . $sensor1[1] . "%\n";
      foreach my $j (0..6) {
       redflash();
      }
      $i++; }
    ctl5();
-   } elsif ($dht22[0] < $targetmin and $dht22[0] > 40) {
+   } elsif ($sensor1[0] < $targetmin and $sensor1[0] > 40) {
    ctl9(); 
    #print "Heat Cycle starting at " . tstamp() . " \n"; 
    ctl1(); sleep 1; ctl3(); my $i = 0; 
-   while ($dht22[0] < $targetinc and $dht22[0] > 40) {
-     @dht22 = tempf();
-     #print "Temperature at " . tstamp() . " is " . $dht22[0] . " degrees F - Humidity " . $dht22[1] . "%\n";
+   while ($sensor1[0] < $targetinc and $sensor1[0] > 40) {
+     @sensor1 = tempf();
+     #print "Temperature at " . tstamp() . " is " . $sensor1[0] . " degrees F - Humidity " . $sensor1[1] . "%\n";
      foreach my $j (0..3) {
       red2flash();
       }
@@ -146,20 +147,20 @@ sub cycleloop {
    ctl9(); 
    #print "Temperature increase detected at " . tstamp() . " \n";
    }
- elsif ($dht22[0] >= $targetmax ) {
+ elsif ($sensor1[0] >= $targetmax ) {
    #print "Heating elements shut off at " . tstamp() . " \n";
    ctl7(); my $i = 0; 
    while ($i < 9) {
-     @dht22 = tempf();
-     #print "Temperature at " . tstamp() . " is " . $dht22[0] . " degrees F - Humidity " . $dht22[1] . "%\n";
+     @sensor1 = tempf();
+     #print "Temperature at " . tstamp() . " is " . $sensor1[0] . " degrees F - Humidity " . $sensor1[1] . "%\n";
      foreach my $j (0..6) {
       redflash();
      }
      $i++; }
    ctl5(); 
    #print "Cooldown cycle completed at " . tstamp() . " \n";
-   while ($dht22[0] >= $targetmax ) { sleep 5; @dht22 = tempf(); 
-   #print "Temperature at " . tstamp() . " is " . $dht22[0] . " degrees F - Humidity " . $dht22[1] . "%\n";
+   while ($sensor1[0] >= $targetmax ) { sleep 5; @sensor1 = tempf(); 
+   #print "Temperature at " . tstamp() . " is " . $sensor1[0] . " degrees F - Humidity " . $sensor1[1] . "%\n";
    }; }
  else {};
  sleep 5;
@@ -176,11 +177,11 @@ sub red2flash {
 ctlc(); usleep 100000; ctl9(); usleep 200000; ctlc(); usleep 100000; ctl9(); usleep 900000;
 }
 
-sub dht22 {
+sub sensor1 {
  while () {
-  chomp(my $dht22raw = `python /home/iceman/Adafruit_Python_DHT/examples/AdafruitDHT.py 22 4`);
+  if ($sensortype == 2) { chomp(my $sensor1raw = `python /home/iceman/Adafruit_Python_DHT/examples/AdafruitDHT.py 22 4`); } elsif ($sensortype == 3) { chomp(my $sensor1raw = `/usr/bin/bme280`); } else { my $sensor1raw = ''; };
   $handle->shlock();
-  $buffer = $dht22raw;
+  $buffer = $sensor1raw;
   $handle->shunlock();
   sleep 4;
  }
@@ -195,18 +196,27 @@ sub tstamp {
 }
 
 sub tempf {
- my $dht22raw = $buffer;
- my $dht22regex = '^[^0-9]*([0-9\\.]+)[^0-9]*([0-9\\.]+)[^0-9]*$';
- $dht22raw =~ m/$dht22regex/g;
- my $dht22tempc  = sprintf("%.2f", $1);
- my $dht22humid = sprintf("%.2f", $2);
- unless ( $dht22tempc >= 0  and  $dht22tempc <= 99  and  $dht22humid >= 0  and  $dht22humid <= 99 )  { $dht22tempc = 0; $dht22humid = 0; };
- my $subdht22tempf = sprintf("%.2f", (9 * $dht22tempc/5) + 32);
- my @subdht;
- @subdht[0] = $subdht22tempf;
- @subdht[1] = $dht22humid;
- @subdht[2] = $dht22tempc;
- return @subdht;
+ my $sensor1raw = $buffer;
+ if ($sensortype == 2) { 
+ my $sensor1regex = '^[^0-9]*([0-9\\.]+)[^0-9]*([0-9\\.]+)[^0-9]*$';
+ $sensor1raw =~ m/$sensor1regex/g;
+ my $sensor1tempc  = sprintf("%.2f", $1);
+ my $sensor1humid = sprintf("%.2f", $2);
+ } elsif ($sensortype == 3) { 
+ my $plcres = decode_json $sensor1raw;
+ my $sensor1humid = sprintf("%.2f", $plcres->{'humidity'});
+ my $sensor1tempc = sprintf("%.2f", $plcres->{'temperature'});
+ } else { 
+ my $sensor1humid = '0';
+ my $sensor1tempc = '0');
+ };
+ unless ( $sensor1tempc >= 0  and  $sensor1tempc <= 99  and  $sensor1humid >= 0  and  $sensor1humid <= 99 )  { $sensor1tempc = 0; $sensor1humid = 0; };
+ my $subsensor1tempf = sprintf("%.2f", (9 * $sensor1tempc/5) + 32);
+ my @subsensor1;
+ @subsensor1[0] = $subsensor1tempf;
+ @subsensor1[1] = $sensor1humid;
+ @subsensor1[2] = $sensor1tempc;
+ return @subsensor1;
 }
 
 sub webreport {
