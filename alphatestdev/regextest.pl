@@ -24,8 +24,8 @@ $hashref->{'bme280feet'} = sprintf("%.2f", $hashref->{'altitude'} * 3.28084);
 $hashref->{'bme280time'} = localtime($hashref->{'timestamp'});
 
 
-print "DHT-22," . sprintf("%.2f", $hashref->{'dht22tempf'}) . "F," . sprintf("%.2f", $hashref->{'dht22tempc'}) . "C," . sprintf("%.2f", $hashref->{'dht22rh'}) . "%RH \n";
-print $hashref->{'sensor'} . "," . sprintf("%.2f", $hashref->{'bme280tempf'}) . "F," . sprintf("%.2f", $hashref->{'temperature'}) . "C," . sprintf("%.2f", $hashref->{'humidity'}) . "%RH," . $hashref->{'bme280inhg'} . "inHg," . $hashref->{'bme280feet'} . "ft," . $hashref->{'bme280time'} . "\n";
+print "DHT-22," . $hashref->{'dht22tempf'} . "," . $hashref->{'dht22tempc'} . "," . $hashref->{'dht22rh'} . ",";
+print $hashref->{'sensor'} . "," . $hashref->{'bme280tempf'} . "," . $hashref->{'temperature'} . "," . $hashref->{'humidity'} . "," . $hashref->{'bme280inhg'} . "," . $hashref->{'bme280feet'} . "," . $hashref->{'bme280time'} . "\n";
 #print "\n";
 
 sleep(10);
