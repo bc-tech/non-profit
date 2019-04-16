@@ -204,6 +204,7 @@ sub tempf {
  print "raw:" . $sensor1raw . " :end\n";
  if ($sensortype == 2) { 
  my $sensor1regex = '^[^0-9]*([0-9\\.]+)[^0-9]*([0-9\\.]+)[^0-9]*$';
+ $sensor1raw ||= "Temp=50.0*  Humidity=10.0%";
  $sensor1raw =~ m/$sensor1regex/g;
  $sensor1tempc  = sprintf("%.2f", $1);
  $sensor1humid = sprintf("%.2f", $2);
