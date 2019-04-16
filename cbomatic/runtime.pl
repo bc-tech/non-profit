@@ -202,7 +202,7 @@ sub tempf {
  my $sensor1raw = $buffer;
  if ($sensortype == 2) { 
  my $sensor1regex = '^[^0-9]*([0-9\\.]+)[^0-9]*([0-9\\.]+)[^0-9]*$';
- if (not defined $sensor1raw || $sensor1raw eq '' || $sensor1raw eq "Failed to get reading. Try again!") { print "DHT read fail\n"; $sensor1raw = "Temp=0.0*  Humidity=0.0%"; };
+ if (!defined $sensor1raw || $sensor1raw eq '' || $sensor1raw eq "Failed to get reading. Try again!") { print "DHT read fail\n"; $sensor1raw = "Temp=0.0*  Humidity=0.0%"; };
  $sensor1raw =~ m/$sensor1regex/g;
  $sensor1tempc  = sprintf("%.2f", $1);
  $sensor1humid = sprintf("%.2f", $2);
