@@ -183,7 +183,7 @@ sub sensor1 {
   if ($sensortype == 2) { chomp($sensor1raw = `python /home/iceman/Adafruit_Python_DHT/examples/AdafruitDHT.py 22 4`); } elsif ($sensortype == 3) { chomp($sensor1raw = `/usr/bin/bme280`); } else { $sensor1raw = ''; };
   $sensor1raw = "nolue";
   $handle->shlock();
-  $buffer = $sensor1raw;
+  $buffer = "nolue";
   $handle->shunlock();
   sleep 4;
  }
