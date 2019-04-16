@@ -29,6 +29,6 @@ print "DHT-22," . $hashref->{'dht22tempf'} . "," . $hashref->{'dht22tempc'} . ",
 print $hashref->{'sensor'} . "," . $hashref->{'bme280tempf'} . "," . $hashref->{'temperature'} . "," . $hashref->{'humidity'} . "," . $hashref->{'bme280inhg'} . "," . $hashref->{'bme280feet'} . "," . $hashref->{'bme280date'} . "," . $hashref->{'bme280time'} . "\n";
 #print "\n";
 
-sleep(10);
+#sleep(10);
 }
 exit 0;
