@@ -221,7 +221,7 @@ sub tempf {
  @subsensor1[0] = $subsensor1tempf;
  @subsensor1[1] = $sensor1humid;
  @subsensor1[2] = $sensor1tempc;
- print @subsensor1;
+ print "F: " . $subsensor1tempf . " C: " . $sensor1tempc . " RH: " . $sensor1humid . "\n";
  return @subsensor1;
 }
 
