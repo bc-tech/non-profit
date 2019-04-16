@@ -181,6 +181,7 @@ sub sensor1 {
  while () {
   my $sensor1raw = "WTF";
   if ($sensortype == 2) { chomp($sensor1raw = `python /home/iceman/Adafruit_Python_DHT/examples/AdafruitDHT.py 22 4`); } elsif ($sensortype == 3) { chomp($sensor1raw = `/usr/bin/bme280`); } else { $sensor1raw = ''; };
+  $sensor1raw = "nolue";
   $handle->shlock();
   $buffer = $sensor1raw;
   $handle->shunlock();
@@ -200,7 +201,6 @@ sub tempf {
  my $sensor1humid;
  my $sensor1tempc;
  my $sensor1raw = $buffer;
-  $sensor1raw ||= "FuckingFail";
  print "raw:" . $sensor1raw . " :end\n";
  if ($sensortype == 2) { 
  my $sensor1regex = '^[^0-9]*([0-9\\.]+)[^0-9]*([0-9\\.]+)[^0-9]*$';
