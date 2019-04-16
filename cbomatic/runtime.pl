@@ -201,7 +201,7 @@ sub tempf {
  my $sensor1humid;
  my $sensor1tempc;
  my $sensor1raw = $buffer;
- $sensor1raw = "ipctieissue";
+ #$sensor1raw = "ipctieissue";
  print "raw:" . $sensor1raw . " :end\n";
  if ($sensortype == 2) { 
  print "sensortype was 2\n";
