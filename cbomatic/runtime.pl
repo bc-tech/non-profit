@@ -20,7 +20,7 @@ my $buffer;
 my $handle = tie $buffer, 'IPC::Shareable', undef, { destroy => 1 };
 rpigpioset();
 my $pid = fork(); if ($pid == -1) { die; } elsif ($pid == 0) { sensor1(); exit 0; }
-
+sleep 5;
 $pid = fork(); if ($pid == -1) { die; } elsif ($pid == 0) { cycleloop(); exit 0; }
 
 $pid = fork(); if ($pid == -1) { die; } elsif ($pid == 0) { webreport(); exit 0; }
