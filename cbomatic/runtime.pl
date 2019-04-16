@@ -121,7 +121,7 @@ sub cycleloop {
  my $targetmax = '99.25';
  my @dht22 = tempf();
  #print "Temperature at " . tstamp() . " is " . $dht22[0] . " degrees F - Humidity " . $dht22[1] . "%\n";
- if ($dht22[0] <= 5) {
+ if ($dht22[0] <= 40) {
     #print "Heating elements shut off at " . tstamp() . " \n";
    ctl7(); my $i = 0; 
    while ($i < 9) {
@@ -132,11 +132,11 @@ sub cycleloop {
      }
      $i++; }
    ctl5();
-   } elsif ($dht22[0] < $targetmin and $dht22[0] > 5) {
+   } elsif ($dht22[0] < $targetmin and $dht22[0] > 40) {
    ctl9(); 
    #print "Heat Cycle starting at " . tstamp() . " \n"; 
    ctl1(); sleep 1; ctl3(); my $i = 0; 
-   while ($dht22[0] < $targetinc and $dht22[0] > 5) {
+   while ($dht22[0] < $targetinc and $dht22[0] > 40) {
      @dht22 = tempf();
      #print "Temperature at " . tstamp() . " is " . $dht22[0] . " degrees F - Humidity " . $dht22[1] . "%\n";
      foreach my $j (0..3) {
