@@ -14,7 +14,7 @@ $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME} = 0;
 use IPC::Shareable;
 
 #main program routine
-my $sensortype = '2'; #0 or 1 invalid, 2 for DHT22, 3 for BME280
+my $sensortype = '3'; #0 or 1 invalid, 2 for DHT22, 3 for BME280
 my $json_text;
 my $buffer;
 my $handle = tie $buffer, 'IPC::Shareable', undef, { destroy => 1 };
