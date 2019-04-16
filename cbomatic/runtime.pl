@@ -180,9 +180,8 @@ ctlc(); usleep 100000; ctl9(); usleep 200000; ctlc(); usleep 100000; ctl9(); usl
 sub sensor1 {
  while () {
   my $sensor1raw;
-  if ($sensortype == 2) { print "sensor2\n"; chomp($sensor1raw = qx(python /home/iceman/Adafruit_Python_DHT/examples/AdafruitDHT.py 22 4)); } elsif ($sensortype == 3) { chomp($sensor1raw = qx(/usr/bin/bme280)); } else { $sensor1raw = ''; };
+  if ($sensortype == 2) { chomp($sensor1raw = qx(python /home/iceman/Adafruit_Python_DHT/examples/AdafruitDHT.py 22 4)); } elsif ($sensortype == 3) { chomp($sensor1raw = qx(/usr/bin/bme280)); } else { $sensor1raw = ''; };
   $handle->shlock();
-  print "setbuf\n";
   $buffer = $sensor1raw;
   $handle->shunlock();
   sleep 4;
@@ -201,11 +200,9 @@ sub tempf {
  my $sensor1humid;
  my $sensor1tempc;
  my $sensor1raw = $buffer;
- #print "raw:" . $sensor1raw . " :end\n";
  if ($sensortype == 2) { 
- print "sensortype was 2\n";
  my $sensor1regex = '^[^0-9]*([0-9\\.]+)[^0-9]*([0-9\\.]+)[^0-9]*$';
- $sensor1raw ||= "Temp=0.0*  Humidity=0.0%";
+ if (not defined $sensor1raw || $sensor1raw eq '' || $sensor1raw eq "Failed to get reading. Try again!") { print "DHT read fail\n"; $sensor1raw = "Temp=0.0*  Humidity=0.0%"; };
  $sensor1raw =~ m/$sensor1regex/g;
  $sensor1tempc  = sprintf("%.2f", $1);
  $sensor1humid = sprintf("%.2f", $2);
