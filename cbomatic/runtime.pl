@@ -15,7 +15,7 @@ use IPC::Shareable;
 
 #main program routine
 my $sensortype = '2' #0 or 1 invalid, 2 for DHT22, 3 for BME280
-my $json_text;
+#my $json_text;
 my $buffer;
 my $handle = tie $buffer, 'IPC::Shareable', undef, { destroy => 1 };
 rpigpioset();
@@ -73,7 +73,7 @@ sub ctlA {
  host => "evergreen",
  );
  my $reportref = \%report;
- $json_text = encode_json $reportref;
+ my $json_text = encode_json $reportref;
  return $json_text;
 }
 
@@ -179,7 +179,8 @@ ctlc(); usleep 100000; ctl9(); usleep 200000; ctlc(); usleep 100000; ctl9(); usl
 
 sub sensor1 {
  while () {
-  if ($sensortype == 2) { chomp(my $sensor1raw = `python /home/iceman/Adafruit_Python_DHT/examples/AdafruitDHT.py 22 4`); } elsif ($sensortype == 3) { chomp(my $sensor1raw = `/usr/bin/bme280`); } else { my $sensor1raw = ''; };
+  my $sensor1raw;
+  if ($sensortype == 2) { chomp($sensor1raw = `python /home/iceman/Adafruit_Python_DHT/examples/AdafruitDHT.py 22 4`); } elsif ($sensortype == 3) { chomp($sensor1raw = `/usr/bin/bme280`); } else { $sensor1raw = ''; };
   $handle->shlock();
   $buffer = $sensor1raw;
   $handle->shunlock();
@@ -196,19 +197,21 @@ sub tstamp {
 }
 
 sub tempf {
+ my $sensor1humid;
+ my $sensor1tempc;
  my $sensor1raw = $buffer;
  if ($sensortype == 2) { 
  my $sensor1regex = '^[^0-9]*([0-9\\.]+)[^0-9]*([0-9\\.]+)[^0-9]*$';
  $sensor1raw =~ m/$sensor1regex/g;
- my $sensor1tempc  = sprintf("%.2f", $1);
- my $sensor1humid = sprintf("%.2f", $2);
+ $sensor1tempc  = sprintf("%.2f", $1);
+ $sensor1humid = sprintf("%.2f", $2);
  } elsif ($sensortype == 3) { 
  my $plcres = decode_json $sensor1raw;
- my $sensor1humid = sprintf("%.2f", $plcres->{'humidity'});
- my $sensor1tempc = sprintf("%.2f", $plcres->{'temperature'});
+ $sensor1humid = sprintf("%.2f", $plcres->{'humidity'});
+ $sensor1tempc = sprintf("%.2f", $plcres->{'temperature'});
  } else { 
- my $sensor1humid = '0';
- my $sensor1tempc = '0');
+ $sensor1humid = '0';
+ $sensor1tempc = '0';
  };
  unless ( $sensor1tempc >= 0  and  $sensor1tempc <= 99  and  $sensor1humid >= 0  and  $sensor1humid <= 99 )  { $sensor1tempc = 0; $sensor1humid = 0; };
  my $subsensor1tempf = sprintf("%.2f", (9 * $sensor1tempc/5) + 32);
