@@ -67,7 +67,7 @@ Device::BCM2835::gpio_set_pud(&Device::BCM2835::RPI_V2_GPIO_P1_26,
 }
 
 sub killscripts {
-my $proc_name = '/usr/bin/perl /home/iceman/runtime.pl';
+my $proc_name = '/usr/bin/perl /home/iceman/cbomatic/runtime.pl';
 #find and kill perl scripts
 my $pid = '';
 my $pt;
