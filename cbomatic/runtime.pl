@@ -121,11 +121,22 @@ sub cycleloop {
  my $targetmax = '99.25';
  my @dht22 = tempf();
  #print "Temperature at " . tstamp() . " is " . $dht22[0] . " degrees F - Humidity " . $dht22[1] . "%\n";
- if ($dht22[0] < $targetmin ) {
+ if ($dht22[0] <= 5) {
+    #print "Heating elements shut off at " . tstamp() . " \n";
+   ctl7(); my $i = 0; 
+   while ($i < 9) {
+     @dht22 = tempf();
+     #print "Temperature at " . tstamp() . " is " . $dht22[0] . " degrees F - Humidity " . $dht22[1] . "%\n";
+     foreach my $j (0..6) {
+      redflash();
+     }
+     $i++; }
+   ctl5();
+   } elsif ($dht22[0] < $targetmin and $dht22[0] > 5) {
    ctl9(); 
    #print "Heat Cycle starting at " . tstamp() . " \n"; 
    ctl1(); sleep 1; ctl3(); my $i = 0; 
-   while ($dht22[0] < $targetinc) {
+   while ($dht22[0] < $targetinc and $dht22[0] > 5) {
      @dht22 = tempf();
      #print "Temperature at " . tstamp() . " is " . $dht22[0] . " degrees F - Humidity " . $dht22[1] . "%\n";
      foreach my $j (0..3) {
@@ -185,12 +196,12 @@ sub tstamp {
 
 sub tempf {
  my $dht22raw = $buffer;
- $dht22raw ||= "Temp=50.0*  Humidity=10.0%";
  my $dht22regex = '^[^0-9]*([0-9\\.]+)[^0-9]*([0-9\\.]+)[^0-9]*$';
  $dht22raw =~ m/$dht22regex/g;
- my $dht22tempc = $1;
- my $dht22humid = $2;
- my $subdht22tempf = (9 * $dht22tempc/5) + 32;
+ my $dht22tempc  = sprintf("%.2f", $1);
+ my $dht22humid = sprintf("%.2f", $2);
+ unless ( $dht22tempc >= 0  and  $dht22tempc <= 99  and  $dht22humid >= 0  and  $dht22humid <= 99 )  { $dht22tempc = 0; $dht22humid = 0; };
+ my $subdht22tempf = sprintf("%.2f", (9 * $dht22tempc/5) + 32);
  my @subdht;
  @subdht[0] = $subdht22tempf;
  @subdht[1] = $dht22humid;
