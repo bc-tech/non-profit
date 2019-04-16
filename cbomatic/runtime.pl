@@ -209,6 +209,7 @@ sub tempf {
  #print "S1: " . $1 . " S2: " . $2 . "\n";
  } elsif ($sensortype == 3) { 
  my $plcres = decode_json $sensor1raw;
+ print "BME read fail at: " . $plcres->{'temperature'} . "\n";
  $sensor1humid = sprintf("%.2f", $plcres->{'humidity'});
  $sensor1tempc = sprintf("%.2f", $plcres->{'temperature'});
  } else { 
