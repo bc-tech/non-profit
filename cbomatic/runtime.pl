@@ -180,7 +180,8 @@ ctlc(); usleep 100000; ctl9(); usleep 200000; ctlc(); usleep 100000; ctl9(); usl
 sub sensor1 {
  while () {
   my $sensor1raw = "WTF";
-#  if ($sensortype == 2) { print "sensor2\n"; chomp($sensor1raw = `python /home/iceman/Adafruit_Python_DHT/examples/AdafruitDHT.py 22 4`); } elsif ($sensortype == 3) { chomp($sensor1raw = `/usr/bin/bme280`); } else { $sensor1raw = ''; };
+  if ($sensortype == 2) { print "sensor2\n"; chomp($sensor1raw = `python /home/iceman/Adafruit_Python_DHT/examples/AdafruitDHT.py 22 4`); } elsif ($sensortype == 3) { chomp($sensor1raw = `/usr/bin/bme280`); } else { $sensor1raw = ''; };
+$sensor1raw = "syntax";
   $handle->shlock();
   print "setbuf\n";
   $buffer = $sensor1raw;
@@ -201,7 +202,6 @@ sub tempf {
  my $sensor1humid;
  my $sensor1tempc;
  my $sensor1raw = $buffer;
- #$sensor1raw = "ipctieissue";
  print "raw:" . $sensor1raw . " :end\n";
  if ($sensortype == 2) { 
  print "sensortype was 2\n";
