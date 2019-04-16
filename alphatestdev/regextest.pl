@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 use strict;
 use JSON;
+use POSIX qw(strftime);
 my %hash;
 my $hashref = \%hash;
 
