@@ -67,9 +67,9 @@ sub ctlA {
  cpuclock => $cpuclock,
  cputemp => $cputemp,
  memused => $memused,
- sensor1tempc => $reportsensor1[2],
- sensor1tempf => $reportsensor1[0],
- sensor1rh => $reportsensor1[1],
+ dht22tempc => $reportsensor1[2],
+ dht22tempf => $reportsensor1[0],
+ dht22rh => $reportsensor1[1],
  host => "evergreen",
  );
  my $reportref = \%report;
@@ -206,7 +206,7 @@ sub tempf {
  $sensor1raw =~ m/$sensor1regex/g;
  $sensor1tempc  = sprintf("%.2f", $1);
  $sensor1humid = sprintf("%.2f", $2);
- print "S1: " . $1 . " S2: " . $2 . "\n";
+ #print "S1: " . $1 . " S2: " . $2 . "\n";
  } elsif ($sensortype == 3) { 
  my $plcres = decode_json $sensor1raw;
  $sensor1humid = sprintf("%.2f", $plcres->{'humidity'});
@@ -221,7 +221,7 @@ sub tempf {
  @subsensor1[0] = $subsensor1tempf;
  @subsensor1[1] = $sensor1humid;
  @subsensor1[2] = $sensor1tempc;
- print "F: " . $subsensor1tempf . " C: " . $sensor1tempc . " RH: " . $sensor1humid . "\n";
+ #print "F: " . $subsensor1tempf . " C: " . $sensor1tempc . " RH: " . $sensor1humid . "\n";
  return @subsensor1;
 }
 
