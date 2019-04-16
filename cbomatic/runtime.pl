@@ -200,6 +200,7 @@ sub tempf {
  my $sensor1humid;
  my $sensor1tempc;
  my $sensor1raw = $buffer;
+ print "raw:" . $sensor1raw . " :end\n";
  if ($sensortype == 2) { 
  my $sensor1regex = '^[^0-9]*([0-9\\.]+)[^0-9]*([0-9\\.]+)[^0-9]*$';
  $sensor1raw =~ m/$sensor1regex/g;
