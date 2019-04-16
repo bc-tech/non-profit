@@ -7,7 +7,7 @@ use Proc::ProcessTable;
 
 #main program routine
 killscripts();
-print "initalizing GPIO \n";
+print "initalizing GPIOs \n";
 rpigpioset();
 print "Killing power to heating elements and led indicators \n";
 ctl6(); ctl7(); ctl8(); ctlc(); ctld();
